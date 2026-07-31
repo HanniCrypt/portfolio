@@ -29,11 +29,13 @@ function level(count: number, [t1, t2, t3]: [number, number, number]): number {
  * diameter grows — 5 / 7 / 9 / 11px on a 12px pitch — while empty days are a
  * 2px speck at low opacity.
  */
-// 53 columns have to fit the 592px content column, so the pitch cannot exceed
-// 592/53 ≈ 11.1. At 12 the graph overflowed by 44px and `overflow-hidden`
-// silently clipped the most recent four weeks off the right-hand edge.
-const PITCH = 11;
-const DIAMETER = [2, 4.5, 6.5, 8.5, 10];
+/**
+ * Dot size as a percentage of its cell, so the 53 columns always divide the
+ * available width exactly. A fixed pixel pitch cannot do this: at 592px it
+ * fit, but the same grid overflowed a 342px phone column by 240px and
+ * `overflow-hidden` quietly clipped the most recent months.
+ */
+const DIAMETER_PCT = [18, 41, 59, 77, 91];
 const EMPTY_OPACITY = 0.12;
 const FILLED_OPACITY = 0.9;
 
@@ -58,21 +60,20 @@ export async function ContributionGraph() {
       </div>
 
       <div
-        className="flex overflow-hidden"
+        className="flex w-full"
         role="img"
         aria-label={`${calendar.total} GitHub contributions in the last year`}
       >
         {calendar.weeks.map((week, weekIndex) => (
-          <div key={weekIndex} className="flex flex-col">
+          <div key={weekIndex} className="flex min-w-0 flex-1 flex-col">
             {week.map((day) => {
               const step = level(day.count, steps);
-              const size = DIAMETER[step];
+              const size = `${DIAMETER_PCT[step]}%`;
               return (
                 <span
                   key={day.date}
                   title={`${day.count} on ${day.date}`}
-                  className="grid place-items-center"
-                  style={{ width: PITCH, height: PITCH }}
+                  className="grid aspect-square w-full place-items-center"
                 >
                   <span
                     className="block rounded-full bg-fg"

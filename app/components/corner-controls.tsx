@@ -25,12 +25,41 @@ const BLUR_MS = 1000;
 const BLUR_PX = 4;
 
 /**
- * Peak gain of the interface blips. Well under 1 to leave headroom — a bare
- * sine at these levels is clean, but pushing past ~0.3 starts to sound harsh
- * on laptop speakers.
+ * The real sounds, lifted from the reference recording rather than
+ * synthesised. Its system-audio capture had a digital-zero noise floor, so
+ * each clip is the original waveform, trimmed to its own onset and decay.
+ *
+ * Levels are the reference's own: each clip is scaled to the median peak of
+ * its family across the whole recording, so no single loud or quiet take sets
+ * the level. Normalising them all to a common peak — as an earlier pass did —
+ * both raised the volume ~4-8x and flattened the balance between them.
+ *
+ *   hover   65ms   a bright noisy tick
+ *   card    115ms  noise transient, then a near-pure 3211 Hz body 16ms behind
+ *   button  97ms   short pitched click
+ *   toggle  351ms  two tones a fifth apart, 1567 Hz over 1052 Hz
  */
-const HOVER_GAIN = 0.08;
-const CLICK_GAIN = 0.2;
+const CLIPS = {
+  hover: "/sounds/hover.wav",
+  card: "/sounds/card.wav",
+  button: "/sounds/button.wav",
+  toggle: "/sounds/toggle.wav",
+} as const;
+
+type Clip = keyof typeof CLIPS;
+
+/**
+ * The clips carry the reference's own peaks — hover 0.164, card 0.188,
+ * button 0.088, toggle 0.269 — so gain of 1 reproduces it exactly. Hover is
+ * pulled below that on purpose: it fires on every pointer pass, so what reads
+ * as balanced in a short demo becomes wearing in use.
+ */
+const LEVEL: Record<Clip, number> = {
+  hover: 0.55,
+  card: 1,
+  button: 1,
+  toggle: 1,
+};
 
 /** Not in TypeScript's DOM lib yet; absent in older browsers. */
 type ViewTransitionDocument = Document & {
@@ -50,9 +79,8 @@ function subscribeToTheme(onChange: () => void) {
 /**
  * The fixed bottom-left pair: sound, then theme.
  *
- * Sound is synthesised with Web Audio rather than shipped as assets — a short
- * blip on hover of anything interactive, a lower one on click. The context is
- * created lazily on the first gesture, since browsers block it before that.
+ * Sounds are short clips played through Web Audio. The context is created
+ * lazily on the first gesture, since browsers block it before that.
  */
 export function CornerControls() {
   const [sound, setSound] = useState(false);
@@ -67,52 +95,94 @@ export function CornerControls() {
     () => false,
   );
 
-  const blip = useCallback(
-    (frequency: number, gain: number) => {
-      if (!sound) return;
-      let ctx = audioRef.current;
-      if (!ctx) {
-        ctx = new AudioContext();
-        audioRef.current = ctx;
-      }
-      if (ctx.state === "suspended") void ctx.resume();
+  /** Lazily created on the first gesture; browsers block it before that. */
+  const context = useCallback(() => {
+    let ctx = audioRef.current;
+    if (!ctx) {
+      ctx = new AudioContext();
+      audioRef.current = ctx;
+    }
+    if (ctx.state === "suspended") void ctx.resume();
+    return ctx;
+  }, []);
 
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
+  /** Decoded clips, fetched once on first use and cached. */
+  const buffers = useRef(new Map<Clip, AudioBuffer>());
+  /** The element the hover sound last spoke for, to avoid retriggering. */
+  const spoken = useRef<Element | null>(null);
+
+  const play = useCallback(
+    async (clip: Clip, force = false) => {
+      if (!sound && !force) return;
+      const ctx = context();
+
+      let buffer = buffers.current.get(clip);
+      if (!buffer) {
+        try {
+          const response = await fetch(CLIPS[clip]);
+          buffer = await ctx.decodeAudioData(await response.arrayBuffer());
+          buffers.current.set(clip, buffer);
+        } catch {
+          return; // offline or blocked — silence is an acceptable outcome
+        }
+      }
+
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
       const amp = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(frequency, now);
-      amp.gain.setValueAtTime(0, now);
-      amp.gain.linearRampToValueAtTime(gain, now + 0.006);
-      amp.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
-      osc.connect(amp).connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.1);
+      amp.gain.value = LEVEL[clip];
+      source.connect(amp).connect(ctx.destination);
+      source.start();
     },
-    [sound],
+    [sound, context],
   );
 
   // One delegated listener each, rather than handlers on every element.
   useEffect(() => {
     if (!sound) return;
     const interactive = "a, button, [role='button']";
+    // `pointerover` bubbles from every descendant, so crossing a card's pill,
+    // icon and tags re-fires it while the hovered card never changed. Track
+    // which element is hovered and speak only when that actually differs.
+    let hovering: Element | null = null;
 
     function onOver(event: PointerEvent) {
       const target = event.target as HTMLElement | null;
-      if (target?.closest(interactive)) blip(1180, HOVER_GAIN);
+      const el = target?.closest(interactive) ?? null;
+      hovering = el;
+      // The corner controls speak only when pressed, never on hover.
+      if (!el || el.closest('[data-sound="control"]')) return;
+      if (el === spoken.current) return;
+      spoken.current = el;
+      void play("hover");
+    }
+
+    function onOut(event: PointerEvent) {
+      // Only clear once the pointer has genuinely left the element, not when
+      // it moves onto one of its own children.
+      const to = event.relatedTarget as HTMLElement | null;
+      if (to && hovering && hovering.contains(to)) return;
+      if (spoken.current && (!to || !spoken.current.contains(to))) {
+        spoken.current = null;
+      }
     }
     function onClick(event: MouseEvent) {
       const target = event.target as HTMLElement | null;
-      if (target?.closest(interactive)) blip(560, CLICK_GAIN);
+      const el = target?.closest(interactive);
+      if (!el) return;
+      // Project cards have their own sound in the reference.
+      void play(el.closest('[data-sound="card"]') ? "card" : "button");
     }
 
     document.addEventListener("pointerover", onOver);
+    document.addEventListener("pointerout", onOut);
     document.addEventListener("click", onClick);
     return () => {
       document.removeEventListener("pointerover", onOver);
+      document.removeEventListener("pointerout", onOut);
       document.removeEventListener("click", onClick);
     };
-  }, [sound, blip]);
+  }, [sound, play]);
 
   function toggleTheme(event: React.MouseEvent<HTMLButtonElement>) {
     const next = !dark;
@@ -166,10 +236,18 @@ export function CornerControls() {
   }
 
   return (
-    <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-4">
+    // On a phone the content column runs full width, so these would sit on top
+    // of the text. A backdrop keeps them legible; from sm up they go bare
+    // again, matching the reference.
+    <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-4 rounded-full bg-bg/85 p-2 backdrop-blur-sm sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
       <button
         type="button"
-        onClick={() => setSound((on) => !on)}
+        onClick={() => {
+          // Plays regardless of state, so switching sound ON is audible.
+          void play("toggle", true);
+          setSound((on) => !on);
+        }}
+        data-sound="control"
         aria-pressed={sound}
         aria-label={sound ? "Mute interface sounds" : "Enable interface sounds"}
         title={sound ? "Sound on" : "Sound off"}
@@ -180,6 +258,7 @@ export function CornerControls() {
 
       <button
         type="button"
+        data-sound="control"
         onClick={toggleTheme}
         aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
         title={dark ? "Light theme" : "Dark theme"}

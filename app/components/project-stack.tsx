@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { Project } from "../lib/data";
 
@@ -10,22 +10,24 @@ import type { Project } from "../lib/data";
  * Tracking the incoming card through a switch gives ~170px of travel and a
  * hard decelerate: a third of the distance in the first 33ms, 75% by 100ms,
  * and the last 8% spread over the remaining 160ms.
- */
-const SLOT = 170; // px between neighbouring card centres
-const CARD_W = 356; // px — the reference cards overlap heavily
-/**
- * A tilted side card lifts its inner top corner by (W/2)·sinθ + (H/2)·cosθ.
- * The drop only has to be enough that the corner tucks behind the front card
- * rather than breaking its top edge — pushing it further just splays the fan
- * downward. Scaling the side cards down does most of that work, so the drop
- * stays small and the three cards read as one aligned group.
+ *
+ * Card width, slot spacing and tilt live in CSS variables (see the container's
+ * classes) so the fan shrinks to fit a phone rather than being clipped. A
+ * rotated card occupies roughly W·cosθ + H·sinθ of width, so the tilt has to
+ * come down on narrow screens too, or its corners still push past the edge.
+ *
+ * LIFT is how far each step back sits below the front card. A tilted side card
+ * raises its inner top corner by (W/2)·sinθ + (H/2)·cosθ; the drop only needs
+ * to be enough that the corner tucks behind the front card rather than
+ * breaking its top edge. Scaling the side cards down does most of that work,
+ * so the drop stays small and the three read as one aligned group.
  */
 const LIFT = 34;
 const SIDE_SCALE = 0.86;
 // Degrees of in-plane rotation per step back. Measured off the reference two
 // ways that agree — fitting the side card's top edge (−15.2°) and its pill's
 // principal axis (−15.7°), with the centre card returning 0.0° as a control.
-const TILT = 15;
+const TILT_FALLBACK = 15;
 const SWITCH_MS = 330;
 // Fitted against the reference curve by measurement, not picked by feel.
 const SWITCH_EASE = "cubic-bezier(0.1, 0.65, 0.15, 1)";
@@ -64,6 +66,40 @@ export function ProjectStack({ projects }: { projects: Project[] }) {
 
   const middle = Math.floor(projects.length / 2);
 
+  // The cards are absolutely positioned, so they cannot size the container.
+  // A fixed height leaves a variable gap underneath — the card is 291px tall
+  // at 320px wide but 256px from 390px up — so measure the lowest card and
+  // let the container hug it.
+  const fanRef = useRef<HTMLDivElement>(null);
+  const [fanHeight, setFanHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fan = fanRef.current;
+    if (!fan) return;
+
+    const measure = () => {
+      const top = fan.getBoundingClientRect().top;
+      const lowest = Array.from(fan.children).reduce(
+        (max, child) =>
+          Math.max(max, child.getBoundingClientRect().bottom - top),
+        0,
+      );
+      setFanHeight(Math.ceil(lowest));
+    };
+
+    measure();
+    // Observing the children only: transforms do not fire ResizeObserver, so
+    // the swap animation cannot cause re-measurement churn. Observing the
+    // container itself would loop, since we are setting its height.
+    const observer = new ResizeObserver(measure);
+    for (const child of Array.from(fan.children)) observer.observe(child);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
   function swapWithMiddle(position: number) {
     setSlots((current) => {
       const next = [...current];
@@ -95,7 +131,17 @@ export function ProjectStack({ projects }: { projects: Project[] }) {
   }
 
   return (
-    <div className="relative h-[340px] select-none">
+    // Full-bleed and clipped on phones, so the side cards run off the screen
+    // edges exactly as they do in the reference. Clipping to the padded text
+    // column instead would slice them 24px inside the visible area, which
+    // reads as a rendering fault rather than as cards continuing off-screen.
+    <div
+      ref={fanRef}
+      // The class height is the pre-hydration fallback; once measured, the
+      // inline height takes over and removes the dead space beneath the fan.
+      className="relative -mx-6 h-[340px] select-none overflow-hidden [--card-w:78vw] [--slot:15vw] [--tilt:13deg] sm:mx-0 sm:overflow-visible sm:[--card-w:356px] sm:[--slot:170px] sm:[--tilt:15deg]"
+      style={fanHeight ? { height: fanHeight } : undefined}
+    >
       {projects.map((project, index) => {
         // Position in the fan, so offset −1 / 0 / +1 is left / centre / right.
         const position = slots.indexOf(index);
@@ -113,7 +159,7 @@ export function ProjectStack({ projects }: { projects: Project[] }) {
             key={project.name}
             className="absolute left-1/2 top-0"
             style={{
-              transform: `translateX(-50%) translateX(${offset * SLOT}px) translateY(${Math.abs(offset) * LIFT - lift}px) rotate(${offset * TILT}deg) scale(${isFront ? 1 : SIDE_SCALE})`,
+              transform: `translateX(-50%) translateX(calc(${offset} * var(--slot))) translateY(${Math.abs(offset) * LIFT - lift}px) rotate(calc(${offset} * var(--tilt, ${TILT_FALLBACK}deg))) scale(${isFront ? 1 : SIDE_SCALE})`,
               opacity: isFront ? 1 : hovered === index ? 0.75 : 0.55,
               zIndex: isFront ? 30 : 10 - Math.abs(offset),
               transition: `transform ${SWITCH_MS}ms ${SWITCH_EASE}, opacity ${SWITCH_MS}ms ${SWITCH_EASE}`,
@@ -126,6 +172,7 @@ export function ProjectStack({ projects }: { projects: Project[] }) {
             {/* Inner element carries the pointer tilt, so it stays instant
                 while the outer element eases between slots. */}
             <div
+              data-sound="card"
               role={isFront ? undefined : "button"}
               tabIndex={isFront ? undefined : 0}
               aria-current={isFront ? "true" : undefined}
@@ -159,7 +206,7 @@ export function ProjectStack({ projects }: { projects: Project[] }) {
                   : "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-fg"
               }`}
               style={{
-                width: CARD_W,
+                width: "var(--card-w)",
                 transform:
                   "rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))",
                 transition: `transform ${HOVER_MS}ms ease-out`,

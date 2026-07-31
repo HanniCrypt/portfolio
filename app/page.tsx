@@ -37,7 +37,7 @@ export default function Home() {
   return (
     <main className="mx-auto w-full max-w-[640px] px-6 pb-28 pt-24">
       {/* Hero */}
-      <section className="flex gap-7">
+      <section className="flex flex-col gap-6 sm:flex-row sm:gap-7">
         <Image
           src="/portrait.jpg"
           alt={`Portrait of ${profile.name}`}
@@ -53,7 +53,7 @@ export default function Home() {
           {profile.blurb.map((paragraph) => (
             <p
               key={paragraph}
-              className="prose-justify mt-4 text-[14.5px] leading-[1.62] text-muted"
+              className="mt-4 text-[14.5px] leading-[1.62] text-muted sm:prose-justify"
             >
               {paragraph}
             </p>
@@ -78,11 +78,11 @@ export default function Home() {
           {experience.map((role) => (
             <li
               key={`${role.year}-${role.title}`}
-              className="grid grid-cols-[64px_1fr_auto] items-baseline gap-4 border-t border-line py-4 text-[14px] last:border-b"
+              className="grid grid-cols-1 gap-1 border-t border-line py-4 text-[14px] last:border-b sm:grid-cols-[64px_1fr_auto] sm:items-baseline sm:gap-4"
             >
               <span className="text-muted">{role.year}</span>
               <span>{role.title}</span>
-              <span className="text-right text-muted">{role.company}</span>
+              <span className="text-muted sm:text-right">{role.company}</span>
             </li>
           ))}
         </ul>
@@ -91,7 +91,7 @@ export default function Home() {
       {/* Education */}
       <section className="mt-16">
         <SectionHead title="education" />
-        <div className="grid grid-cols-[104px_1fr] gap-4 text-[14px]">
+        <div className="grid grid-cols-1 gap-1 text-[14px] sm:grid-cols-[104px_1fr] sm:gap-4">
           <span className="text-muted">{education.years}</span>
           <span>
             {education.degree}
@@ -132,7 +132,7 @@ export default function Home() {
           <h2 className="text-[19px] tracking-tight">certifications</h2>
           <span className="label">{certifications.length} credentials</span>
         </div>
-        <ul className="grid grid-cols-2 gap-4">
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {certifications.map((cert) => (
             <li
               key={cert.name}
