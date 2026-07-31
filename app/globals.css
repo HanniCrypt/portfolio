@@ -1,26 +1,100 @@
 @import "tailwindcss";
 
+/* Theme is toggled by a class on <html>, not by the media query alone. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f5f5f5;
+  --fg: #131313;
+  --muted: #6f6f6c;
+  --faint: #9a9a96;
+  --line: rgba(0, 0, 0, 0.09);
+  --line-strong: rgba(0, 0, 0, 0.16);
+  --card: rgba(255, 255, 255, 0.72);
+  --card-glow: rgba(0, 0, 0, 0.05);
+
+  /* Consumed by the dot field canvas. Values measured off the reference:
+     page #f5f5f5, resting cell #e6e6e6, Pac-Man #aaaaaa. */
+  --cell-rgb: 17, 17, 17;
+  --cell-base: 0.066;
+  --cell-hot: 0.5;
+  --pac-alpha: 0.33;
+}
+
+.dark {
+  --bg: #121212;
+  --fg: #ededeb;
+  --muted: #8d8d88;
+  --faint: #5e5e5a;
+  --line: rgba(255, 255, 255, 0.11);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --card: rgba(23, 23, 23, 0.72);
+  --card-glow: rgba(255, 255, 255, 0.08);
+
+  /* Dark reference: page #121212, resting cell #232323, Pac-Man #6a6a6a. */
+  --cell-rgb: 240, 240, 240;
+  --cell-base: 0.077;
+  --cell-hot: 0.55;
+  --pac-alpha: 0.4;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-card: var(--card);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* The uppercase micro-label that sits above/beside every section. */
+@utility label {
+  font-size: 10.5px;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Hero copy is justified with real hyphenation, as in the reference. */
+@utility prose-justify {
+  text-align: justify;
+  hyphens: auto;
+}
+
+/**
+ * Theme toggle: the incoming theme is revealed by a growing circle rather
+ * than the default cross-fade, so both snapshots are held still and stacked
+ * with the new one on top for the clip to cut into.
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 0;
+}
+::view-transition-new(root) {
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
