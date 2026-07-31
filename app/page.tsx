@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 
 import { ContributionGraph } from "./components/contribution-graph";
@@ -44,7 +45,7 @@ export default function Home() {
           width={182}
           height={221}
           priority
-          className="aspect-[4/5] h-auto w-full shrink-0 rounded-lg border border-line object-cover sm:aspect-auto sm:h-[221px] sm:w-[182px]"
+          className="mx-auto aspect-[4/5] h-auto w-[200px] max-w-[60%] shrink-0 rounded-lg border border-line object-cover sm:mx-0 sm:aspect-auto sm:h-[221px] sm:w-[182px] sm:max-w-none"
         />
         <div>
           <h1 className="text-balance text-[26px] font-semibold leading-[1.1] tracking-tight sm:text-[30px] sm:leading-none">
