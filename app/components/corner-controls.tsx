@@ -166,6 +166,10 @@ export function CornerControls() {
         spoken.current = null;
       }
     }
+    // Capture phase: React's own handler runs first in the bubble phase and
+    // can change the element before we see it. A clicked project card becomes
+    // the front card and loses its `role="button"`, so by then it no longer
+    // matches and the click fell silent.
     function onClick(event: MouseEvent) {
       const target = event.target as HTMLElement | null;
       const el = target?.closest(interactive);
@@ -176,11 +180,11 @@ export function CornerControls() {
 
     document.addEventListener("pointerover", onOver);
     document.addEventListener("pointerout", onOut);
-    document.addEventListener("click", onClick);
+    document.addEventListener("click", onClick, true);
     return () => {
       document.removeEventListener("pointerover", onOver);
       document.removeEventListener("pointerout", onOut);
-      document.removeEventListener("click", onClick);
+      document.removeEventListener("click", onClick, true);
     };
   }, [sound, play]);
 
