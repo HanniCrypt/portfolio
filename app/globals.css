@@ -10,7 +10,11 @@
   --faint: #9a9a96;
   --line: rgba(0, 0, 0, 0.09);
   --line-strong: rgba(0, 0, 0, 0.16);
-  --card: rgba(255, 255, 255, 0.72);
+  /* Opaque, and deliberately so: a translucent fill let the card behind read
+     straight through the front one while they crossed during a switch. The
+     value is what the old rgba(255,255,255,0.72) actually rendered as over the
+     page, so the card looks unchanged — it just no longer transmits. */
+  --card: #fcfcfc;
   --card-glow: rgba(0, 0, 0, 0.05);
 
   /* Consumed by the dot field canvas. Values measured off the reference:
@@ -28,7 +32,7 @@
   --faint: #5e5e5a;
   --line: rgba(255, 255, 255, 0.11);
   --line-strong: rgba(255, 255, 255, 0.2);
-  --card: rgba(23, 23, 23, 0.72);
+  --card: #181818;
   --card-glow: rgba(255, 255, 255, 0.08);
 
   /* Dark reference: page #121212, resting cell #232323, Pac-Man #6a6a6a. */

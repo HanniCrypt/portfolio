@@ -200,7 +200,9 @@ export function ProjectStack({ projects }: { projects: Project[] }) {
                 untrack(event);
                 if (!isFront) setHovered(null);
               }}
-              className={`relative overflow-hidden rounded-xl border border-line bg-card p-5 text-left shadow-[0_18px_40px_-24px_rgb(0_0_0/0.45)] backdrop-blur-sm ${
+              // No backdrop-blur: the fill is opaque now, so it would blur a
+              // backdrop that is fully covered anyway — pure compositing cost.
+              className={`relative overflow-hidden rounded-xl border border-line bg-card p-5 text-left shadow-[0_18px_40px_-24px_rgb(0_0_0/0.45)] ${
                 isFront
                   ? "cursor-default"
                   : "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-fg"
