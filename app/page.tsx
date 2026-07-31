@@ -34,9 +34,42 @@ function SectionHead({
   );
 }
 
-export default function Home() {
+/** Envelope, drawn in the same stroke weight as the corner control icons. */
+function MailMark() {
   return (
-    <main className="mx-auto w-full max-w-[640px] px-6 pb-32 pt-16 sm:pb-28 sm:pt-24">
+    <svg
+      width={15}
+      height={15}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <rect x="2.75" y="5" width="18.5" height="14" rx="2.5" />
+      <path d="m3.5 7 8.5 6 8.5-6" />
+    </svg>
+  );
+}
+
+/** The official GitHub mark — a solid glyph, so it is filled rather than stroked. */
+function GitHubMark() {
+  return (
+    <svg width={15} height={15} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 .5C5.73.5.98 5.24.98 11.5c0 4.86 3.03 9 7.4 10.63.54.1.72-.24.72-.53l-.02-1.86c-3.01.65-3.64-1.45-3.64-1.45-.5-1.25-1.2-1.58-1.2-1.58-.99-.67.07-.66.07-.66 1.09.08 1.66 1.12 1.66 1.12.97 1.66 2.55 1.18 3.17.9.1-.7.38-1.18.69-1.45-2.4-.27-4.93-1.2-4.93-5.35 0-1.18.42-2.15 1.11-2.9-.11-.28-.48-1.38.11-2.87 0 0 .9-.29 2.96 1.1a10.3 10.3 0 0 1 5.4 0c2.05-1.39 2.95-1.1 2.95-1.1.59 1.49.22 2.59.11 2.87.69.75 1.11 1.72 1.11 2.9 0 4.16-2.54 5.07-4.95 5.34.39.34.74 1 .74 2.02l-.01 3c0 .29.18.63.73.53a11.03 11.03 0 0 0 7.39-10.63C23.02 5.24 18.27.5 12 .5Z" />
+    </svg>
+  );
+}
+
+export default function Home() {
+  // Bottom padding is the trailing space below the footer. On phones it also
+  // has to clear the fixed control pill, which occupies the last ~70px of the
+  // viewport; on desktop the pill sits far left of the column, so the page can
+  // end sooner.
+  return (
+    <main className="mx-auto w-full max-w-[640px] px-6 pb-24 pt-16 sm:pb-16 sm:pt-24">
       {/* Hero */}
       <section className="flex flex-col gap-6 sm:flex-row sm:gap-7">
         <Image
@@ -165,16 +198,18 @@ export default function Home() {
         <div className="mt-6 flex gap-3">
           <a
             href={`mailto:${profile.email}`}
-            className="rounded-md bg-fg px-4 py-2.5 text-[13px] text-bg transition-opacity hover:opacity-85"
+            className="inline-flex items-center gap-2 rounded-md bg-fg px-4 py-2.5 text-[13px] text-bg transition-opacity hover:opacity-85"
           >
+            <MailMark />
             Send Email
           </a>
           <a
             href={profile.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-md border border-line px-4 py-2.5 text-[13px] transition-colors hover:border-line-strong"
+            className="inline-flex items-center gap-2 rounded-md border border-line px-4 py-2.5 text-[13px] transition-colors hover:border-line-strong"
           >
+            <GitHubMark />
             GitHub
           </a>
         </div>
