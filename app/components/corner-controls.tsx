@@ -237,9 +237,9 @@ export function CornerControls() {
 
   return (
     // On a phone the content column runs full width, so these would sit on top
-    // of the text. A backdrop keeps them legible; from sm up they go bare
-    // again, matching the reference.
-    <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-4 rounded-full bg-bg/85 p-2 backdrop-blur-sm sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+    // of the copy. A solid pill keeps them readable and reads as a floating
+    // control; from sm up they go bare again, matching the reference.
+    <div className="fixed bottom-5 left-5 z-40 flex flex-row items-center gap-5 rounded-full border border-line bg-bg px-4 py-2.5 shadow-[0_8px_24px_-12px_rgb(0_0_0/0.5)] sm:bottom-6 sm:left-6 sm:flex-col sm:gap-4 sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none">
       <button
         type="button"
         onClick={() => {

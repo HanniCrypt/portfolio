@@ -35,7 +35,7 @@ function SectionHead({
 
 export default function Home() {
   return (
-    <main className="mx-auto w-full max-w-[640px] px-6 pb-28 pt-24">
+    <main className="mx-auto w-full max-w-[640px] px-6 pb-32 pt-16 sm:pb-28 sm:pt-24">
       {/* Hero */}
       <section className="flex flex-col gap-6 sm:flex-row sm:gap-7">
         <Image
@@ -44,10 +44,10 @@ export default function Home() {
           width={182}
           height={221}
           priority
-          className="h-[221px] w-[182px] shrink-0 rounded-lg border border-line object-cover"
+          className="aspect-[4/5] h-auto w-full shrink-0 rounded-lg border border-line object-cover sm:aspect-auto sm:h-[221px] sm:w-[182px]"
         />
         <div>
-          <h1 className="text-[30px] font-semibold leading-none tracking-tight">
+          <h1 className="text-balance text-[26px] font-semibold leading-[1.1] tracking-tight sm:text-[30px] sm:leading-none">
             {profile.greeting}
           </h1>
           {profile.blurb.map((paragraph) => (

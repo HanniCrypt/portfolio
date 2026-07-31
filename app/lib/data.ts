@@ -6,7 +6,7 @@
 
 export const profile = {
   name: "Roince Jumao-as",
-  greeting: "Hi, I'm Roince Jumao-as",
+  greeting: "Hi, I'm Roince Jumao\u2011as", // non-breaking hyphen
   email: "roincejumaoas.prsnl@gmail.com",
   github: "HanniCrypt",
   githubUrl: "https://github.com/HanniCrypt",
