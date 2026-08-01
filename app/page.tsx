@@ -24,7 +24,7 @@ function SectionHead({
 }) {
   return (
     <div className="mb-6 flex items-baseline justify-between">
-      <h2 className="text-[19px] tracking-tight">{title}</h2>
+      <h2 className="text-[18px] tracking-[-0.02em]">{title}</h2>
       {action ? (
         <a href={href ?? "#"} className="label transition-colors hover:text-fg">
           {action} <span aria-hidden>→</span>
@@ -81,20 +81,23 @@ export default function Home() {
           className="mx-auto aspect-[4/5] h-auto w-[200px] max-w-[60%] shrink-0 rounded-lg border border-line object-cover sm:mx-0 sm:aspect-auto sm:h-[221px] sm:w-[182px] sm:max-w-none"
         />
         <div>
-          <h1 className="text-balance text-[26px] font-semibold leading-[1.1] tracking-tight sm:text-[30px] sm:leading-none">
+          {/* Hero type is the reference's, read off its computed styles rather
+              than guessed: 32px/700 at -0.035em over 15px/500 at 1.65. The
+              phone size keeps the ratio the column already used. */}
+          <h1 className="text-balance text-[28px] font-bold leading-[1.15] tracking-[-0.035em] sm:text-[32px]">
             {profile.greeting}
           </h1>
           {profile.blurb.map((paragraph) => (
             <p
               key={paragraph}
-              className="mt-4 text-[14.5px] leading-[1.62] text-muted sm:prose-justify"
+              className="mt-4 text-[15px] font-medium leading-[1.65] text-muted sm:prose-justify"
             >
               {paragraph}
             </p>
           ))}
           <a
             href={`mailto:${profile.email}`}
-            className="mt-5 inline-block text-[13.5px] text-muted transition-colors hover:text-fg"
+            className="mt-5 inline-block text-[13px] text-muted transition-colors hover:text-fg"
           >
             send email <span aria-hidden>↗</span>
           </a>
@@ -163,7 +166,7 @@ export default function Home() {
       {/* Certifications */}
       <section className="mt-12">
         <div className="mb-5 flex items-baseline justify-between">
-          <h2 className="text-[19px] tracking-tight">certifications</h2>
+          <h2 className="text-[18px] tracking-[-0.02em]">certifications</h2>
           <span className="label">{certifications.length} credentials</span>
         </div>
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -190,7 +193,7 @@ export default function Home() {
 
       {/* Contact */}
       <section className="mt-16">
-        <h2 className="text-[19px] tracking-tight">Let&rsquo;s build something</h2>
+        <h2 className="text-[18px] tracking-[-0.02em]">Let&rsquo;s build something</h2>
         <p className="mt-4 max-w-[430px] text-[14px] leading-[1.62] text-muted">
           Have a project, role, or idea? Drop a line — I read every message and
           usually reply within a day or two.
