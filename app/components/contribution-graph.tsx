@@ -1,4 +1,4 @@
-import { getContributions } from "../lib/github";
+import { getContributions, type ContributionDay } from "../lib/github";
 import { profile } from "../lib/data";
 
 /**
@@ -36,6 +36,27 @@ function level(count: number, [t1, t2, t3]: [number, number, number]): number {
  * `overflow-hidden` quietly clipped the most recent months.
  */
 const DIAMETER_PCT = [18, 41, 59, 77, 91];
+
+/**
+ * Tooltip text, worded the way GitHub words its own: the unit spelled out and
+ * pluralised, and a date a person would read.
+ *
+ * Formatted in UTC on purpose. The API returns a plain YYYY-MM-DD, which
+ * `new Date` reads as UTC midnight; letting the server's own zone format it
+ * would print the previous day anywhere west of Greenwich, so a Manila commit
+ * could show up labelled with the wrong date.
+ */
+function dayLabel({ count, date }: ContributionDay): string {
+  const when = new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", {
+    timeZone: "UTC",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  if (count === 0) return `No contributions on ${when}`;
+  return `${count} contribution${count === 1 ? "" : "s"} on ${when}`;
+}
 const EMPTY_OPACITY = 0.12;
 const FILLED_OPACITY = 0.9;
 
@@ -72,7 +93,7 @@ export async function ContributionGraph() {
               return (
                 <span
                   key={day.date}
-                  title={`${day.count} on ${day.date}`}
+                  title={dayLabel(day)}
                   className="grid aspect-square w-full place-items-center"
                 >
                   <span
