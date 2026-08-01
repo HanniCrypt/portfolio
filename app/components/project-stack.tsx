@@ -200,8 +200,11 @@ export function ProjectStack({ projects }: { projects: Project[] }) {
                 untrack(event);
                 if (!isFront) setHovered(null);
               }}
-              // No backdrop-blur: the fill is opaque now, so it would blur a
-              // backdrop that is fully covered anyway — pure compositing cost.
+              // Opaque fill, deliberately: a translucent one let the card
+              // behind read straight through the front one as they crossed
+              // during a switch. No backdrop-blur either — every slot carries
+              // a transform and an opacity, both of which establish a backdrop
+              // root, so the filter has nothing behind it to sample.
               className={`relative overflow-hidden rounded-xl border border-line bg-card p-5 text-left shadow-[0_18px_40px_-24px_rgb(0_0_0/0.45)] ${
                 isFront
                   ? "cursor-default"
