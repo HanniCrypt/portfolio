@@ -95,7 +95,25 @@ export const projects: Project[] = [
   },
 ];
 
-export const certifications = [
-  { name: "Professional Cloud Architect", issuer: "GOOGLE CLOUD", mark: "◆" },
-  { name: "Kubernetes Application Developer", issuer: "CNCF", mark: "⎈" },
+export type Certification = {
+  name: string;
+  issuer: string;
+  /** Selects the brand mark drawn in the card's logo tile. */
+  mark: "gemini" | "ibm";
+  href: string;
+};
+
+/**
+ * Placeholder credentials, like the rest of this file. The verify links are
+ * deliberately inert — the reference points these at its owner's real badge
+ * pages, which are personal to them.
+ */
+export const certifications: Certification[] = [
+  {
+    name: "Gemini Certified Educator",
+    issuer: "Google",
+    mark: "gemini",
+    href: "#",
+  },
+  { name: "Data Science Tools", issuer: "IBM", mark: "ibm", href: "#" },
 ];

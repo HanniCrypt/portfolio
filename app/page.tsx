@@ -1,6 +1,7 @@
 
 import Image from "next/image";
 
+import { CertificationCard } from "./components/certification-card";
 import { ContributionGraph } from "./components/contribution-graph";
 import { ProjectStack } from "./components/project-stack";
 import {
@@ -169,24 +170,9 @@ export default function Home() {
           <h2 className="text-[18px] tracking-[-0.02em]">certifications</h2>
           <span className="label">{certifications.length} credentials</span>
         </div>
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {certifications.map((cert) => (
-            <li
-              key={cert.name}
-              className="rounded-lg border border-line px-5 py-8 text-center"
-            >
-              <span aria-hidden className="text-[17px] text-muted">
-                {cert.mark}
-              </span>
-              <p className="mt-5 text-[13.5px]">{cert.name}</p>
-              <p className="label mt-4">{cert.issuer}</p>
-              <a
-                href="#"
-                className="label mt-6 inline-block transition-colors hover:text-fg"
-              >
-                Verify <span aria-hidden>↗</span>
-              </a>
-            </li>
+            <CertificationCard key={cert.name} cert={cert} />
           ))}
         </ul>
       </section>
