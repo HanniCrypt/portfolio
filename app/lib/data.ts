@@ -99,21 +99,25 @@ export type Certification = {
   name: string;
   issuer: string;
   /** Selects the brand mark drawn in the card's logo tile. */
-  mark: "gemini" | "ibm";
+  mark: "html5" | "gemini" | "ibm";
   href: string;
 };
 
 /**
- * Placeholder credentials, like the rest of this file. The verify links are
- * deliberately inert — the reference points these at its owner's real badge
- * pages, which are personal to them.
+ * The first entry is a real credential and its href is the live verification
+ * page. The second is still a placeholder carried over from the reference
+ * layout — it names a real IBM programme and its Verify link goes nowhere, so
+ * replace or drop it before this goes public.
+ *
+ * A "gemini" mark is also registered in certification-card.tsx if a Google
+ * credential is ever added back.
  */
 export const certifications: Certification[] = [
   {
-    name: "Gemini Certified Educator",
-    issuer: "Google",
-    mark: "gemini",
-    href: "#",
+    name: "HTML Fundamentals",
+    issuer: "CodeCred",
+    mark: "html5",
+    href: "https://www.codecred.dev/verify/6e8312cf-e987-4a5f-8cb3-7d694dab284a",
   },
   { name: "Data Science Tools", issuer: "IBM", mark: "ibm", href: "#" },
 ];

@@ -32,6 +32,27 @@ function untrack(event: React.PointerEvent<HTMLLIElement>) {
   el.style.setProperty("--tilt-x", "0deg");
 }
 
+/**
+ * The HTML5 shield. It carries its own background, so unlike a monochrome
+ * glyph it reads on both themes without needing a currentColor variant.
+ */
+function Html5Mark() {
+  return (
+    <svg className="size-7" viewBox="0 0 512 512" aria-hidden>
+      <path fill="#E44D26" d="M71 460L30 0h451l-41 460-185 52z" />
+      <path fill="#F16529" d="M256 472l149-41 35-394H256z" />
+      <path
+        fill="#EBEBEB"
+        d="M256 208h-75l-5-58h80V94H108l14 171h134zm0 147l-63-17-4-45h-56l7 89 116 32z"
+      />
+      <path
+        fill="#FFF"
+        d="M255 208v57h69l-6 73-63 17v59l116-32 16-174zm0-114v56h136l5-56z"
+      />
+    </svg>
+  );
+}
+
 /** The Gemini mark: a four-point star on Google's brand gradient. */
 function GeminiMark() {
   return (
@@ -94,7 +115,7 @@ function ArrowMark() {
   );
 }
 
-const marks = { gemini: GeminiMark, ibm: IbmMark };
+const marks = { html5: Html5Mark, gemini: GeminiMark, ibm: IbmMark };
 
 export function CertificationCard({ cert }: { cert: Certification }) {
   const Mark = marks[cert.mark];
@@ -139,8 +160,10 @@ export function CertificationCard({ cert }: { cert: Certification }) {
 
       <a
         href={cert.href}
-        target="_blank"
-        rel="noopener noreferrer"
+        // Placeholder entries still use "#", and opening that in a new tab
+        // would spawn a duplicate of this page rather than a credential.
+        target={cert.href === "#" ? undefined : "_blank"}
+        rel={cert.href === "#" ? undefined : "noopener noreferrer"}
         aria-label={`Verify ${cert.name} from ${cert.issuer}`}
         className="relative z-[1] mt-auto inline-flex items-center gap-1.5 pt-4 font-mono text-[9px] uppercase tracking-[0.16em] text-muted transition-colors duration-200 hover:text-fg focus-visible:text-fg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-fg"
       >
