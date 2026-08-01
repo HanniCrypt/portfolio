@@ -8,8 +8,8 @@ export const profile = {
   name: "Roince Jumao-as",
   greeting: "Hi, I'm Roince Jumao\u2011as", // non-breaking hyphen
   email: "roincejumaoas.prsnl@gmail.com",
-  github: "HanniCrypt",
-  githubUrl: "https://github.com/HanniCrypt",
+  github: "itsruwins",
+  githubUrl: "https://github.com/itsruwins",
   blurb: [
     "Full Stack Developer & Systems Tinkerer. Building end-to-end products with TypeScript, Go, and whatever the problem actually needs.",
     "I care about the unglamorous parts — data models, latency budgets, and error states — because that is where products quietly succeed or fail.",
