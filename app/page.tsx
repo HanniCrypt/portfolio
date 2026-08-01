@@ -70,7 +70,10 @@ export default function Home() {
   // viewport; on desktop the pill sits far left of the column, so the page can
   // end sooner.
   return (
-    <main className="mx-auto w-full max-w-[640px] px-6 pb-24 pt-16 sm:pb-16 sm:pt-24">
+    <main
+      id="main"
+      className="mx-auto w-full max-w-[640px] px-6 pb-24 pt-16 sm:pb-16 sm:pt-24"
+    >
       {/* Hero */}
       <section className="flex flex-col gap-6 sm:flex-row sm:gap-7">
         <Image
@@ -206,7 +209,7 @@ export default function Home() {
 
       <footer className="mt-20 flex items-baseline justify-between border-t border-line pt-6 text-[12.5px] text-muted">
         <span>© {new Date().getFullYear()} {profile.name}</span>
-        <a href="#" className="transition-colors hover:text-fg">
+        <a href="#main" className="transition-colors hover:text-fg">
           Back to top <span aria-hidden>↑</span>
         </a>
       </footer>

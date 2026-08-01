@@ -54,6 +54,14 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Drives the footer's "Back to top" link, which is a plain anchor to #main.
+   Native smooth scrolling rather than a scripted one: it keeps the link
+   working without JavaScript and stays interruptible, so a wheel or trackpad
+   gesture mid-flight cancels it instead of fighting an animation. */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--bg);
   color: var(--fg);
@@ -94,6 +102,10 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {
