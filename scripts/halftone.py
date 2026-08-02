@@ -13,36 +13,51 @@ averaged by ffmpeg) and writes a PITCH-scaled raw gray frame on stdout.
 
 Regenerate app/headshot-halftone.png with:
 
-  C=118; P=8; W=$((C*P))
+  C=108; R=131; P=8
   ffmpeg -i app/headshot.jpg \
-    -vf "crop=720:720:265:45,format=gray,\
-curves=all='0/0 0.36/0.28 0.82/1 1/1',scale=$C:$C:flags=area" \
+    -vf "crop=720:874:265:30,format=gray,\
+curves=all='0/0.10 0.36/0.32 0.82/1 1/1',scale=$C:$R:flags=area" \
     -f rawvideo -pix_fmt gray - \
-   | python3 scripts/halftone.py $C $P 1.0 0.72 \
-   | ffmpeg -f rawvideo -pix_fmt gray -s ${W}x${W} -i - -frames:v 1 \
+   | python3 scripts/halftone.py $C $R $P 1.0 0.72 \
+   | ffmpeg -f rawvideo -pix_fmt gray -s $((C*P))x$((R*P)) -i - -frames:v 1 \
        app/headshot-halftone.png -y
 
-CELLS is 118 rather than the reference's 170 because the box here is 200px
-wide, not 288 — matching dots-per-CSS-pixel is what makes the texture read at
-the same size. The curve lifts the lit side of the face to pure white so the
-dots describe the shadows, which is what the reference does.
+108x131 cells, not the reference's 170 across: the box here is 182x221, not
+288 wide, and what has to match is dots per CSS pixel (1.69), not dot count.
+
+The curve does two things. Pulling 0.82 up to white clips the lit side of the
+face so the dots only describe shadows, as the reference does. Lifting 0 to
+0.10 keeps the black suit from collapsing into one solid mass — the reference
+gets that texture for free from a mid-grey jacket, this photo does not.
+
+The suit is meant to read as a solid black mass; two attempts at pulling
+texture out of it were tried and rejected. Recorded so they are not retried
+blind: the tie is not separable from the jacket below the knot, where centre
+minus lapel luminance measures -1.1 and +0.6 out of 255 against +18.7 across
+the upper chest, so lifting the shadows there greys the whole jacket without
+revealing a tie. And the curve is the weaker lever for lightening anyway — at
+RMAX 0.72 a dot only has to reach radius 0.5*PITCH to touch its neighbours,
+which the suit clears at almost any lift, so it merges regardless; dropping
+RMAX to 0.66 is what actually opens the dark end.
 """
 import sys
 
-CELLS = int(sys.argv[1])  # dots across
-PITCH = int(sys.argv[2])  # output pixels per dot
-GAMMA = float(sys.argv[3])  # <1 darkens midtones, >1 lightens
-RMAX = float(sys.argv[4])  # max radius as a fraction of PITCH
+COLS = int(sys.argv[1])  # dots across
+ROWS = int(sys.argv[2])  # dots down
+PITCH = int(sys.argv[3])  # output pixels per dot
+GAMMA = float(sys.argv[4])  # <1 darkens midtones, >1 lightens
+RMAX = float(sys.argv[5])  # max radius as a fraction of PITCH
 
 src = sys.stdin.buffer.read()
-assert len(src) >= CELLS * CELLS, f"expected {CELLS*CELLS} bytes, got {len(src)}"
+assert len(src) >= COLS * ROWS, f"expected {COLS*ROWS} bytes, got {len(src)}"
 
-W = CELLS * PITCH
-out = bytearray(b"\xff" * (W * W))  # start white
+W = COLS * PITCH
+H = ROWS * PITCH
+out = bytearray(b"\xff" * (W * H))  # start white
 
-for cy in range(CELLS):
-    for cx in range(CELLS):
-        lum = src[cy * CELLS + cx] / 255.0
+for cy in range(ROWS):
+    for cx in range(COLS):
+        lum = src[cy * COLS + cx] / 255.0
         darkness = (1.0 - lum) ** GAMMA
         if darkness <= 0.001:
             continue
@@ -55,7 +70,7 @@ for cy in range(CELLS):
         lo_x = max(0, int(ox - r - 1))
         hi_x = min(W, int(ox + r + 2))
         lo_y = max(0, int(oy - r - 1))
-        hi_y = min(W, int(oy + r + 2))
+        hi_y = min(H, int(oy + r + 2))
 
         for y in range(lo_y, hi_y):
             dy = y + 0.5 - oy

@@ -83,20 +83,21 @@ export default function Home() {
     >
       {/* Hero */}
       <section className="flex flex-col gap-6 sm:flex-row sm:gap-7">
-        {/* Square box to match the source, which is 1:1. The old 182x221 and
-            aspect-[4/5] boxes cropped ~20% off each side — survivable on a
-            full-body shot, but on a headshot it cut into the shoulders. 200px
-            keeps roughly the area the 182x221 box had, so the hero still
-            balances against the text beside it. */}
+        {/* 182x221, the reference's proportions. A 200px square left the text
+            column at 364px — about 47 characters a line, short enough that
+            justifying it opened visible rivers between words — and stood 58px
+            shorter than the text beside it. The portrait box widens the
+            measure and closes most of that height gap.
+
+            sm:self-start matters: the hero is a flex row on desktop, and the
+            default align-items:stretch would pull the image to the text
+            block's height and defeat the aspect ratio. Only applied from sm
+            up, so mx-auto keeps centring it on phones. */}
         <Image
           src={headshot}
           alt={`Portrait of ${profile.name}`}
           priority
-          // sm:self-start matters: the hero is a flex row on desktop, and the
-          // default align-items:stretch would pull the image to the text
-          // block's height and defeat aspect-square. Only applied from sm up,
-          // so mx-auto keeps centring it on phones.
-          className="mx-auto aspect-square w-[200px] max-w-[60%] shrink-0 rounded-lg border border-line object-cover sm:mx-0 sm:max-w-none sm:self-start"
+          className="mx-auto aspect-[182/221] w-[182px] max-w-[55%] shrink-0 rounded-lg border border-line object-cover sm:mx-0 sm:max-w-none sm:self-start"
         />
         <div>
           {/* Hero type is the reference's, read off its computed styles rather
