@@ -4,7 +4,10 @@ import Image from "next/image";
 // Imported rather than referenced from /public so the filename is content
 // hashed. Swapping the photo then changes its URL, instead of leaving browsers
 // on the previous one for the four hours the image cache headers allow.
-import headshot from "./headshot.jpg";
+// Halftone treatment, generated offline by scripts/halftone.py from
+// headshot.jpg. Baked into the asset rather than computed in the browser,
+// which is how the reference does it: no canvas, no filter, just an <img>.
+import headshot from "./headshot-halftone.png";
 import { CertificationCard } from "./components/certification-card";
 import { ContributionGraph } from "./components/contribution-graph";
 import { ProjectStack } from "./components/project-stack";
