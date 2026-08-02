@@ -1,6 +1,10 @@
 
 import Image from "next/image";
 
+// Imported rather than referenced from /public so the filename is content
+// hashed. Swapping the photo then changes its URL, instead of leaving browsers
+// on the previous one for the four hours the image cache headers allow.
+import headshot from "./headshot.jpg";
 import { CertificationCard } from "./components/certification-card";
 import { ContributionGraph } from "./components/contribution-graph";
 import { ProjectStack } from "./components/project-stack";
@@ -76,13 +80,20 @@ export default function Home() {
     >
       {/* Hero */}
       <section className="flex flex-col gap-6 sm:flex-row sm:gap-7">
+        {/* Square box to match the source, which is 1:1. The old 182x221 and
+            aspect-[4/5] boxes cropped ~20% off each side — survivable on a
+            full-body shot, but on a headshot it cut into the shoulders. 200px
+            keeps roughly the area the 182x221 box had, so the hero still
+            balances against the text beside it. */}
         <Image
-          src="/portrait.jpg"
+          src={headshot}
           alt={`Portrait of ${profile.name}`}
-          width={182}
-          height={221}
           priority
-          className="mx-auto aspect-[4/5] h-auto w-[200px] max-w-[60%] shrink-0 rounded-lg border border-line object-cover sm:mx-0 sm:aspect-auto sm:h-[221px] sm:w-[182px] sm:max-w-none"
+          // sm:self-start matters: the hero is a flex row on desktop, and the
+          // default align-items:stretch would pull the image to the text
+          // block's height and defeat aspect-square. Only applied from sm up,
+          // so mx-auto keeps centring it on phones.
+          className="mx-auto aspect-square w-[200px] max-w-[60%] shrink-0 rounded-lg border border-line object-cover sm:mx-0 sm:max-w-none sm:self-start"
         />
         <div>
           {/* Hero type is the reference's, read off its computed styles rather
