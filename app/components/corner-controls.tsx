@@ -4,7 +4,6 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useState,
   useSyncExternalStore,
 } from "react";
 
@@ -50,6 +49,45 @@ type ViewTransitionDocument = Document & {
   startViewTransition?: (callback: () => void) => { ready: Promise<void> };
 };
 
+/**
+ * The sound preference lives in localStorage, not component state: every link
+ * to a sub-page is a fresh document, so plain state reset it on navigation.
+ * Exposed as an external store so it can be read during render without a
+ * setState-in-effect, matching how the theme is read below.
+ */
+const SOUND_KEY = "sound";
+const soundListeners = new Set<() => void>();
+
+function subscribeToSound(onChange: () => void) {
+  soundListeners.add(onChange);
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === SOUND_KEY) onChange();
+  };
+  window.addEventListener("storage", onStorage);
+  return () => {
+    soundListeners.delete(onChange);
+    window.removeEventListener("storage", onStorage);
+  };
+}
+
+function readSound() {
+  try {
+    return localStorage.getItem(SOUND_KEY) === "on";
+  } catch {
+    // Private mode — sound just stays off for the session.
+    return false;
+  }
+}
+
+function writeSound(on: boolean) {
+  try {
+    localStorage.setItem(SOUND_KEY, on ? "on" : "off");
+  } catch {
+    // Ignored, as above.
+  }
+  for (const notify of soundListeners) notify();
+}
+
 /** Tracks the `dark` class on <html>, whoever set it. */
 function subscribeToTheme(onChange: () => void) {
   const observer = new MutationObserver(onChange);
@@ -67,7 +105,10 @@ function subscribeToTheme(onChange: () => void) {
  * lazily on the first gesture, since browsers block it before that.
  */
 export function CornerControls() {
-  const [sound, setSound] = useState(false);
+  // Server snapshot is `false` so the markup matches; React corrects it on
+  // hydration from the stored preference.
+  const sound = useSyncExternalStore(subscribeToSound, readSound, () => false);
+  const toggleSound = useCallback(() => writeSound(!readSound()), []);
   const audioRef = useRef<AudioContext | null>(null);
 
   // The inline script in the layout sets the class before paint; read it
@@ -214,7 +255,7 @@ export function CornerControls() {
         onClick={() => {
           // Plays regardless of state, so switching sound ON is audible.
           void play("toggle", true);
-          setSound((on) => !on);
+          toggleSound();
         }}
         data-sound="control"
         aria-pressed={sound}

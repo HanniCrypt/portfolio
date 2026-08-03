@@ -28,13 +28,24 @@ export const metadata: Metadata = {
  * preventing flash before hydration.
  */
 const themeScript = `
-try {
-  var stored = localStorage.getItem('theme');
-  var dark = stored
-    ? stored === 'dark'
-    : window.matchMedia('(prefers-color-scheme: dark)').matches;
-  if (dark) document.documentElement.classList.add('dark');
-} catch (e) {}
+(function () {
+  function apply() {
+    try {
+      var stored = localStorage.getItem('theme');
+      var dark = stored
+        ? stored === 'dark'
+        : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.toggle('dark', dark);
+    } catch (e) {}
+  }
+  apply();
+  // A bfcache restore replays the old DOM without re-running this script, so
+  // going Back to a page last painted in the other theme would leave it there
+  // while localStorage says otherwise. Re-apply on restore.
+  window.addEventListener('pageshow', function (e) { if (e.persisted) apply(); });
+  // And follow the preference when another tab changes it.
+  window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+})();
 `;
 
 export default function RootLayout({
