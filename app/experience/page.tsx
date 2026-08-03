@@ -15,7 +15,7 @@ export default function ExperiencePage() {
       title="Where I've worked."
       intro="A timeline of the teams I've supported, the products I've built, and the roles I've grown through."
     >
-      <div className="mt-12 sm:mt-16">
+      <div className="mt-9">
         {workHistory.map((company, index) => (
           <section
             key={company.name}

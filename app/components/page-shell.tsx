@@ -24,7 +24,7 @@ export function PageShell({
   return (
     <main
       id="main"
-      className="mx-auto w-full max-w-[728px] px-6 pb-24 pt-12 sm:pb-16 sm:pt-16"
+      className="mx-auto w-full max-w-[728px] px-6 pb-24 pt-14 sm:pb-16 sm:pt-20"
     >
       <Link
         href="/#main"
@@ -37,15 +37,18 @@ export function PageShell({
         <p className="label">{eyebrow}</p>
         {/* 60.8px at -0.055em on the reference. Scaled down on phones, where
             that would run to four lines in a 342px column. */}
-        <h1 className="mt-5 text-balance text-[38px] font-semibold leading-[0.98] tracking-[-0.045em] sm:text-[60px] sm:tracking-[-0.055em]">
+        <h1 className="mt-3 text-balance text-[38px] font-semibold leading-[0.98] tracking-[-0.045em] sm:text-[60px] sm:tracking-[-0.055em]">
           {title}
         </h1>
-        <p className="mt-6 max-w-[46ch] text-[15px] leading-[1.7] text-muted">
+        <p className="mt-5 max-w-[46ch] text-[15px] leading-[1.7] text-muted">
           {intro}
         </p>
       </header>
 
-      <hr className="mt-12 border-line sm:mt-16" />
+      {/* Hero rhythm measured off the reference: 12px eyebrow-to-title,
+          20px title-to-intro, and 105px from the intro down to the first row
+          of content. The previous values ran 48px long on that last gap. */}
+      <hr className="mt-10 border-line" />
 
       {children}
 

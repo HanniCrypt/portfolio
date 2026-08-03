@@ -17,7 +17,7 @@ export default function ProjectsPage() {
     >
       {/* One bordered container with hairline-separated rows, as the reference
           has it, rather than a card per project. */}
-      <ul className="mt-12 overflow-hidden rounded-2xl border border-line sm:mt-16">
+      <ul className="mt-9 overflow-hidden rounded-2xl border border-line">
         {projectArchive.map((project, index) => (
           <li
             key={project.name}

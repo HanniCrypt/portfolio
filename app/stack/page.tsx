@@ -57,7 +57,7 @@ export default function StackPage() {
       title="Tools I build with."
       intro="My technical stack, organised by the role each tool plays — from interface design through to deployment."
     >
-      <div className="mt-12 sm:mt-16">
+      <div className="mt-9">
         {stackGroups.map((group, index) => (
           <section
             key={group.label}
