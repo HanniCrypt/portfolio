@@ -69,7 +69,7 @@ export function Monogram({ initials }: { initials: string }) {
   return (
     <span
       aria-hidden
-      className="grid size-14 shrink-0 place-items-center rounded-xl border border-line bg-card text-[13px] font-medium tracking-wide shadow-[0_1px_2px_rgb(10_10_10/0.035)]"
+      className="relative z-10 grid size-16 shrink-0 place-items-center rounded-[18px] border border-line bg-card text-[13px] font-medium tracking-wide shadow-[0_1px_2px_rgb(10_10_10/0.035)]"
     >
       {initials}
     </span>
