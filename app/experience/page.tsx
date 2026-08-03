@@ -63,9 +63,12 @@ export default function ExperiencePage() {
             </div>
 
             {/* A single role gets no rule of its own — with nothing to connect
-                it would just be a stray tick. The reference does the same. */}
+                it would just be a stray tick. The reference does the same.
+
+                mt-6 puts 30px between the company's site line and the first
+                role, matching the reference; without it they sat 7px apart. */}
             {company.roles.length > 1 ? (
-              <ol className="ml-[92px] border-l border-line">
+              <ol className="ml-[92px] mt-6 border-l border-line">
                 {company.roles.map((role) => (
                   <li key={role.title} className="relative pb-10 pl-5 last:pb-0">
                     <span
