@@ -64,7 +64,7 @@ function Mark({ label }: { label: string }) {
  */
 function Chip({ label }: { label: string }) {
   return (
-    <li className="inline-flex h-7 items-center gap-[5.6px] rounded-full border border-line bg-surface pl-[7.2px] pr-[10.4px] text-[11px] font-medium text-fg transition-colors hover:border-line-strong hover:text-fg">
+    <li className="inline-flex h-7 items-center gap-[5.6px] rounded-full border border-line bg-surface pl-[7.2px] pr-[10.4px] text-[11px] font-medium text-muted transition-colors hover:border-line-strong hover:text-fg">
       <Mark label={label} />
       {label}
     </li>
@@ -88,7 +88,11 @@ export default function StackPage() {
               index > 0 ? "border-t border-rule" : ""
             }`}
           >
-            <h2 className="label sm:pt-1.5">{group.label}</h2>
+            {/* The row's anchor, so it carries the weight: the reference sets these
+                at 11px/500, and the chips beside them recede to muted. */}
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] sm:pt-1.5">
+              {group.label}
+            </h2>
             <ul className="flex flex-wrap gap-2">
               {group.items.map((item) => (
                 <Chip key={item} label={item} />
@@ -101,7 +105,9 @@ export default function StackPage() {
       {/* mt-8 + pt-9 lands 97px below the last chip, matching the reference.
           The previous mt-20/pt-14 left a 165px hole here. */}
       <section className="mt-8 border-t border-rule pt-9">
-        <p className="label">{operations.eyebrow}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em]">
+          {operations.eyebrow}
+        </p>
         <h2 className="mt-4 text-[20px] font-semibold tracking-[-0.03em]">
           {operations.title}
         </h2>
