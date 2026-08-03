@@ -9,22 +9,6 @@ import {
 } from "react";
 
 /**
- * The theme change is revealed by a circle expanding from the toggle to the
- * furthest viewport corner. Measured off the reference: ~430ms, standard
- * ease-out (45% of the way at a quarter of the duration, 83% at 72%).
- */
-const REVEAL_MS = 430;
-
-/**
- * The incoming theme also arrives blurred and resolves. Measuring text
- * sharpness through the transition: it bottoms out at a quarter of its
- * settled value as the circle passes, then climbs back over ~800ms — well
- * after the circle itself has finished.
- */
-const BLUR_MS = 1000;
-const BLUR_PX = 4;
-
-/**
  * The real sounds, lifted from the reference recording rather than
  * synthesised. Its system-audio capture had a digital-zero noise floor, so
  * each clip is the original waveform, trimmed to its own onset and decay.
@@ -206,37 +190,18 @@ export function CornerControls() {
       return;
     }
 
-    // Circle grows from the button to whichever viewport corner is furthest.
+    // Circle grows from the button outwards; 150vmax always clears the corner.
     const rect = event.currentTarget.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
-    const reach = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y),
-    );
 
-    const transition = doc.startViewTransition(apply);
-    void transition.ready.then(() => {
-      const root = document.documentElement;
-      // Only the incoming theme is touched; the old one sits beneath.
-      const incoming = "::view-transition-new(root)";
+    // The reveal itself lives in CSS — see ::view-transition-new(root) in
+    // globals.css. All that is needed here is the origin, because the mask is
+    // centred on wherever the button happens to be.
+    document.documentElement.style.setProperty("--theme-reveal-x", `${x}px`);
+    document.documentElement.style.setProperty("--theme-reveal-y", `${y}px`);
 
-      root.animate(
-        {
-          clipPath: [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${reach}px at ${x}px ${y}px)`,
-          ],
-        },
-        { duration: REVEAL_MS, easing: "ease-out", pseudoElement: incoming },
-      );
-
-      // Separate animation: the blur outlasts the circle by a wide margin.
-      root.animate(
-        { filter: [`blur(${BLUR_PX}px)`, "blur(0px)"] },
-        { duration: BLUR_MS, easing: "linear", pseudoElement: incoming },
-      );
-    });
+    doc.startViewTransition(apply);
   }
 
   return (
@@ -268,7 +233,11 @@ export function CornerControls() {
         title={dark ? "Light theme" : "Dark theme"}
         className="text-muted transition-colors hover:text-fg"
       >
-        {dark ? <Sun /> : <Moon />}
+        {/* Keyed on the theme so React swaps the element rather than reusing
+            it — the spin-in only replays if the node is actually new. */}
+        <span key={dark ? "sun" : "moon"} className="theme-icon-in grid place-items-center">
+          {dark ? <Sun /> : <Moon />}
+        </span>
       </button>
     </div>
   );

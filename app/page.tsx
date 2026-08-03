@@ -82,7 +82,7 @@ export default function Home() {
       className="mx-auto w-full max-w-[640px] px-6 pb-24 pt-16 sm:pb-16 sm:pt-24"
     >
       {/* Hero */}
-      <section className="flex flex-col gap-6 sm:flex-row sm:gap-7">
+      <section className="fade-up flex flex-col gap-6 sm:flex-row sm:gap-7">
         {/* 182x221, the reference's proportions. A 200px square left the text
             column at 364px — about 47 characters a line, short enough that
             justifying it opened visible rivers between words — and stood 58px
@@ -123,12 +123,13 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="mt-[60px]">
+      {/* The graph is the one block the reference staggers, by 80ms. */}
+      <div className="fade-up mt-[60px] [animation-delay:80ms]">
         <ContributionGraph />
       </div>
 
       {/* Experience */}
-      <section className="mt-16">
+      <section className="fade-up mt-16">
         <SectionHead title="experience" action="Full history" href="/experience" />
         <ul>
           {experience.map((role) => (
@@ -145,7 +146,7 @@ export default function Home() {
       </section>
 
       {/* Education */}
-      <section className="mt-16">
+      <section className="fade-up mt-16">
         <SectionHead title="education" />
         <div className="grid grid-cols-1 gap-1 text-[14px] sm:grid-cols-[104px_1fr] sm:gap-4">
           <span className="text-muted">{education.years}</span>
@@ -157,7 +158,7 @@ export default function Home() {
       </section>
 
       {/* Stack */}
-      <section className="mt-16">
+      <section className="fade-up mt-16">
         <div className="mb-5 flex items-baseline justify-between">
           <h2 className="label">Stack</h2>
           <a href="/stack" className="label transition-colors hover:text-fg">
@@ -177,13 +178,13 @@ export default function Home() {
       </section>
 
       {/* Projects */}
-      <section className="mt-16">
+      <section className="fade-up mt-16">
         <SectionHead title="projects" action="All projects" href="/projects" />
         <ProjectStack projects={projects} />
       </section>
 
       {/* Certifications */}
-      <section className="mt-12">
+      <section className="fade-up mt-12">
         <div className="mb-5 flex items-baseline justify-between">
           <h2 className="text-[18px] tracking-[-0.02em]">certifications</h2>
           <span className="label">{certifications.length} credentials</span>
@@ -196,7 +197,7 @@ export default function Home() {
       </section>
 
       {/* Contact */}
-      <section className="mt-16">
+      <section className="fade-up mt-16">
         <h2 className="text-[18px] tracking-[-0.02em]">Let&rsquo;s build something</h2>
         <p className="mt-4 max-w-[430px] text-[14px] leading-[1.62] text-muted">
           Have a project, role, or idea? Drop a line — I read every message and

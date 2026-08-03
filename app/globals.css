@@ -84,26 +84,96 @@ body {
   hyphens: auto;
 }
 
+/* Sections rise into place on mount. Matched to the reference: 12px of
+   travel over 700ms, and `both` so they hold at opacity 0 until they run. */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* The theme-toggle icon spins in each time it swaps. */
+@keyframes theme-icon-in {
+  from {
+    opacity: 0;
+    transform: rotate(-40deg) scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility theme-icon-in {
+  animation: theme-icon-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /**
  * Theme toggle: the incoming theme is revealed by a growing circle rather
  * than the default cross-fade, so both snapshots are held still and stacked
- * with the new one on top for the clip to cut into.
+ * with the new one on top for the mask to cut into.
+ *
+ * The radius has to be registered, or it would jump at 50% instead of
+ * interpolating — custom properties are not animatable until declared with a
+ * type. This is the whole reason the reveal is smooth.
  */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
+@property --theme-reveal-radius {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
 }
+
+@keyframes theme-circle-reveal {
+  from {
+    --theme-reveal-radius: 0px;
+    filter: blur(8px);
+  }
+  to {
+    --theme-reveal-radius: 150vmax;
+    filter: blur(0px);
+  }
+}
+
+::view-transition-group(root) {
+  animation-duration: 2s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 ::view-transition-old(root) {
-  z-index: 0;
+  z-index: -1;
+  animation: none;
 }
+
+/* A radial mask rather than a clip path, so the leading edge is feathered
+   over 32px instead of cutting hard. */
 ::view-transition-new(root) {
-  z-index: 1;
+  mask-image: radial-gradient(
+    circle at var(--theme-reveal-x, 50vw) var(--theme-reveal-y, 50vh),
+    #0a0a0a 0 var(--theme-reveal-radius),
+    transparent calc(var(--theme-reveal-radius) + 32px),
+    transparent 100%
+  );
+  animation: theme-circle-reveal 2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  mix-blend-mode: normal;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
   }
 
   *,

@@ -33,7 +33,7 @@ export function PageShell({
         <span aria-hidden>←</span> Portfolio
       </Link>
 
-      <header className="mt-12 sm:mt-16">
+      <header className="fade-up mt-12 sm:mt-16">
         <p className="label">{eyebrow}</p>
         {/* 60.8px at -0.055em on the reference. Scaled down on phones, where
             that would run to four lines in a 342px column. */}
