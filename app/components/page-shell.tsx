@@ -48,11 +48,11 @@ export function PageShell({
       {/* Hero rhythm measured off the reference: 12px eyebrow-to-title,
           20px title-to-intro, and 105px from the intro down to the first row
           of content. The previous values ran 48px long on that last gap. */}
-      <hr className="mt-10 border-line" />
+      <hr className="mt-10 border-rule" />
 
       {children}
 
-      <footer className="mt-20 flex items-baseline justify-between border-t border-line pt-6 text-[13px] text-muted">
+      <footer className="mt-20 flex items-baseline justify-between border-t border-rule pt-6 text-[13px] text-muted">
         <span>
           © {new Date().getFullYear()} {profile.name}
         </span>

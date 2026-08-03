@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { PageShell } from "../components/page-shell";
+import { brandPaths } from "../lib/brand-icons";
 import { operations, profile, stackGroups } from "../lib/data";
 
 export const metadata: Metadata = {
@@ -9,11 +10,31 @@ export const metadata: Metadata = {
 };
 
 /**
- * Chip mark. The reference carries a real logo for the handful of tools that
- * have one and falls back to this ⊙ for everything else — which is most of
- * them — so a single neutral glyph is the house style here, not a shortcut.
+ * Chip mark: the tool's real logo where one exists, otherwise the neutral ⊙.
+ * That is the reference's own pattern — it carries brand marks for the tools
+ * that have them and falls back to ⊙ for the rest.
+ *
+ * Drawn in currentColor rather than brand colours, so the row reads as one
+ * material and both themes work without a second set of assets.
  */
-function Mark() {
+function Mark({ label }: { label: string }) {
+  const path = brandPaths[label];
+
+  if (path) {
+    return (
+      <svg
+        width={12}
+        height={12}
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden
+        className="shrink-0"
+      >
+        <path d={path} />
+      </svg>
+    );
+  }
+
   return (
     <svg
       width={12}
@@ -43,8 +64,8 @@ function Mark() {
  */
 function Chip({ label }: { label: string }) {
   return (
-    <li className="inline-flex h-7 items-center gap-[5.6px] rounded-full border border-line bg-card pl-[7.2px] pr-[10.4px] text-[11px] font-medium text-muted transition-colors hover:border-line-strong hover:text-fg">
-      <Mark />
+    <li className="inline-flex h-7 items-center gap-[5.6px] rounded-full border border-line bg-surface pl-[7.2px] pr-[10.4px] text-[11px] font-medium text-fg transition-colors hover:border-line-strong hover:text-fg">
+      <Mark label={label} />
       {label}
     </li>
   );
@@ -64,7 +85,7 @@ export default function StackPage() {
             // py-6 puts the label-to-label pitch at the reference's 113px;
             // py-7 overshot it by 8.
             className={`grid grid-cols-1 gap-4 py-6 sm:grid-cols-[150px_1fr] sm:gap-6 ${
-              index > 0 ? "border-t border-line" : ""
+              index > 0 ? "border-t border-rule" : ""
             }`}
           >
             <h2 className="label sm:pt-1.5">{group.label}</h2>
@@ -79,7 +100,7 @@ export default function StackPage() {
 
       {/* mt-8 + pt-9 lands 97px below the last chip, matching the reference.
           The previous mt-20/pt-14 left a 165px hole here. */}
-      <section className="mt-8 border-t border-line pt-9">
+      <section className="mt-8 border-t border-rule pt-9">
         <p className="label">{operations.eyebrow}</p>
         <h2 className="mt-4 text-[20px] font-semibold tracking-[-0.03em]">
           {operations.title}

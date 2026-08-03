@@ -135,7 +135,7 @@ export default function Home() {
           {experience.map((role) => (
             <li
               key={`${role.year}-${role.title}`}
-              className="grid grid-cols-1 gap-1 border-t border-line py-4 text-[14px] last:border-b sm:grid-cols-[64px_1fr_auto] sm:items-baseline sm:gap-4"
+              className="grid grid-cols-1 gap-1 border-t border-rule py-4 text-[14px] last:border-b sm:grid-cols-[64px_1fr_auto] sm:items-baseline sm:gap-4"
             >
               <span className="text-muted">{role.year}</span>
               <span>{role.title}</span>
@@ -223,7 +223,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="mt-20 flex items-baseline justify-between border-t border-line pt-6 text-[12.5px] text-muted">
+      <footer className="mt-20 flex items-baseline justify-between border-t border-rule pt-6 text-[12.5px] text-muted">
         <span>© {new Date().getFullYear()} {profile.name}</span>
         <a href="#main" className="transition-colors hover:text-fg">
           Back to top <span aria-hidden>↑</span>

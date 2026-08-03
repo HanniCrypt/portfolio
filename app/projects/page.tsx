@@ -21,7 +21,7 @@ export default function ProjectsPage() {
         {projectArchive.map((project, index) => (
           <li
             key={project.name}
-            className={index > 0 ? "border-t border-line" : undefined}
+            className={index > 0 ? "border-t border-rule" : undefined}
           >
             <a
               href="#"
