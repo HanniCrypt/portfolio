@@ -121,3 +121,179 @@ export const certifications: Certification[] = [
   },
   { name: "Data Science Tools", issuer: "IBM", mark: "ibm", href: "#" },
 ];
+
+/* ------------------------------------------------------------------ *
+ * Sub-page content. Mock, like the rest of this file.
+ * ------------------------------------------------------------------ */
+
+export type Position = {
+  title: string;
+  period: string;
+  /** Employment type · location · arrangement. */
+  meta: string;
+  summary: string;
+  tags: string[];
+};
+
+export type Company = {
+  name: string;
+  /** Shown under the company name; not a working link on mock data. */
+  site: string;
+  /** Monogram for the logo tile — these companies have no real marks. */
+  initials: string;
+  roles: Position[];
+};
+
+export const workHistory: Company[] = [
+  {
+    name: "Meridian Labs",
+    site: "meridianlabs.example",
+    initials: "ML",
+    roles: [
+      {
+        title: "Senior Frontend Engineer",
+        period: "February 2026 — Present",
+        meta: "Full-time · Remote",
+        summary:
+          "Lead the design-system rewrite and the migration to the App Router — partnering with design to ship accessible components, cut bundle weight, and keep interaction latency inside budget.",
+        tags: ["TypeScript", "Next.js", "Design systems"],
+      },
+      {
+        title: "Frontend Engineer",
+        period: "March 2025 — February 2026",
+        meta: "Full-time · Remote",
+        summary:
+          "Built the customer-facing dashboard and the charting layer behind it, and set up the visual-regression suite the team still gates releases on.",
+        tags: ["React", "Testing", "Data visualisation"],
+      },
+    ],
+  },
+  {
+    name: "Northbay Systems",
+    site: "northbaysystems.example",
+    initials: "NB",
+    roles: [
+      {
+        title: "Full Stack Developer",
+        period: "January 2025 — March 2025",
+        meta: "Contract · Hybrid",
+        summary:
+          "Shipped the billing integration end to end — schema, webhooks, retries, and the reconciliation job that made the finance team's month-end close survivable.",
+        tags: ["Go", "PostgreSQL", "Stripe"],
+      },
+    ],
+  },
+  {
+    name: "Cordelia Interactive",
+    site: "cordelia.example",
+    initials: "CI",
+    roles: [
+      {
+        title: "Software Engineer",
+        period: "June 2024 — December 2024",
+        meta: "Full-time · On-site",
+        summary:
+          "Maintained the realtime multiplayer layer, chased down desync bugs across three clients, and brought p99 message latency under 80ms.",
+        tags: ["Node.js", "WebSockets", "Redis"],
+      },
+      {
+        title: "Junior Developer",
+        period: "August 2023 — June 2024",
+        meta: "Full-time · On-site",
+        summary:
+          "Built internal tools for the content team and took over the release pipeline, trimming a manual deploy from forty minutes to four.",
+        tags: ["Docker", "CI/CD", "Internal tools"],
+      },
+    ],
+  },
+];
+
+export type StackGroup = { label: string; items: string[] };
+
+export const stackGroups: StackGroup[] = [
+  {
+    label: "Web",
+    items: ["TypeScript", "React", "Next.js", "TailwindCSS", "Vite", "Zustand"],
+  },
+  {
+    label: "Databases & backend",
+    items: [
+      "Node.js",
+      "Go",
+      "PostgreSQL",
+      "Redis",
+      "Prisma",
+      "tRPC",
+      "REST",
+      "GraphQL",
+    ],
+  },
+  { label: "Mobile", items: ["React Native", "Expo", "Swift"] },
+  { label: "Cloud & tooling", items: ["Docker", "Vercel", "Fly.io", "GitHub Actions", "Terraform"] },
+  { label: "Testing", items: ["Vitest", "Playwright", "Testing Library"] },
+];
+
+export const operations = {
+  eyebrow: "Beyond development",
+  title: "Operations",
+  summary:
+    "The unglamorous systems I keep running so the engineering work has somewhere to land.",
+  items: [
+    "Release management",
+    "Incident response",
+    "Technical writing",
+    "Onboarding docs",
+    "Mentoring",
+  ],
+};
+
+export type ArchivedProject = {
+  name: string;
+  kind: string;
+  summary: string;
+};
+
+export const projectArchive: ArchivedProject[] = [
+  {
+    name: "Halcyon",
+    kind: "Devtool",
+    summary:
+      "Local-first API client with request diffing, typed mocks, and shareable collections.",
+  },
+  {
+    name: "Tidepool",
+    kind: "Realtime",
+    summary:
+      "Collaborative canvas with CRDT sync, presence, and offline replay on reconnect.",
+  },
+  {
+    name: "Ferrous",
+    kind: "CLI",
+    summary:
+      "Log tailer with structured query filters and a scrollback that survives restarts.",
+  },
+  {
+    name: "Quarry",
+    kind: "Data",
+    summary:
+      "Incremental static-analysis index that answers cross-repo queries in under a second.",
+  },
+  {
+    name: "Lattice",
+    kind: "Design system",
+    summary:
+      "Component library and token pipeline shared across three product surfaces.",
+  },
+  {
+    name: "Driftwood",
+    kind: "Side project",
+    summary:
+      "Tide and swell dashboard that turns buoy telemetry into a readable week ahead.",
+  },
+  {
+    name: "Postmark",
+    kind: "Infrastructure",
+    summary:
+      "Webhook relay with replay, dead-letter queues, and per-tenant rate limits.",
+  },
+];

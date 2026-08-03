@@ -160,7 +160,7 @@ export default function Home() {
       <section className="mt-16">
         <div className="mb-5 flex items-baseline justify-between">
           <h2 className="label">Stack</h2>
-          <a href="#" className="label transition-colors hover:text-fg">
+          <a href="/stack" className="label transition-colors hover:text-fg">
             View all <span aria-hidden>→</span>
           </a>
         </div>
