@@ -23,11 +23,16 @@ export default function ProjectsPage() {
             key={project.name}
             className={index > 0 ? "border-t border-rule" : undefined}
           >
+            {/* items-center is the point: the name and the arrow sit on the
+                row's middle, not at its top, so a three-line summary keeps the
+                name optically anchored. Column widths, 24/44px padding and the
+                32px gap are the reference's. Its columns deliberately do not
+                fill the row — the arrow stops short of the right edge. */}
             <a
               href="#"
-              className="group grid grid-cols-1 gap-3 px-6 py-7 transition-colors hover:bg-card sm:grid-cols-[200px_1fr_auto] sm:items-start sm:gap-6"
+              className="group grid grid-cols-1 gap-3 px-6 py-6 transition-colors hover:bg-card sm:grid-cols-[163px_minmax(0,275px)_24px] sm:items-center sm:gap-8 sm:px-11"
             >
-              <h2 className="text-[20px] leading-[1.65] tracking-[-0.045em]">
+              <h2 className="text-[20.8px] leading-[1.65] tracking-[-0.045em]">
                 {project.name}
               </h2>
               <div>
@@ -38,7 +43,7 @@ export default function ProjectsPage() {
               </div>
               <span
                 aria-hidden
-                className="hidden text-[13px] text-faint transition-colors group-hover:text-fg sm:block sm:pt-1"
+                className="hidden text-[13px] text-faint transition-colors group-hover:text-fg sm:block"
               >
                 ↗
               </span>
