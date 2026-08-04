@@ -7,8 +7,10 @@ import { profile } from "../lib/data";
  * a back link, an eyebrow, an oversized title, a short intro, then a rule
  * separating the hero from the content.
  *
- * The column is 680px here rather than the homepage's 592px — measured off
- * the reference, which widens the sub-pages to carry denser content.
+ * The column is 616px here rather than the homepage's 592px — measured off
+ * the reference. Getting this wrong is not just a width difference: the
+ * projects rows use fixed grid columns that sum to the row, so an over-wide
+ * column left dead space on the right and stranded the row's trailing arrow.
  */
 export function PageShell({
   eyebrow,
@@ -24,7 +26,7 @@ export function PageShell({
   return (
     <main
       id="main"
-      className="mx-auto w-full max-w-[728px] px-6 pb-24 pt-14 sm:pb-16 sm:pt-20"
+      className="mx-auto w-full max-w-[664px] px-6 pb-24 pt-14 sm:pb-16 sm:pt-20"
     >
       <Link
         href="/#main"
